@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Con Estilo · Identidad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..700&family=Hanken+Grotesk:wght@400..600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --tinta: #151413;
+    --grafito: #2A2826;
+    --piedra: #6B665F;
+    --ceniza: #A39D94;
+    --bruma: #DDD8D0;
+    --papel: #F5F3EF;
+    --blanco: #FFFFFF;
+    --serif: "Bodoni Moda", Georgia, serif;
+    --sans: "Hanken Grotesk", system-ui, sans-serif;
+    --ease-out: cubic-bezier(.22, 1, .36, 1);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--papel); color: var(--tinta); font: 400 1rem/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  header.top { padding: 56px 0 40px; border-bottom: 1px solid var(--bruma); }
+  .eyebrow { font: 500 .75rem/1 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--piedra); }
+  h1 { font: 500 clamp(2.5rem, 6vw, 4.5rem)/1.02 var(--serif); font-variation-settings: "opsz" 96; letter-spacing: -.01em; margin-top: 16px; }
+  h2 { font: 500 2rem/1.1 var(--serif); font-variation-settings: "opsz" 72; margin-bottom: 8px; }
+  section { padding: 72px 0; border-bottom: 1px solid var(--bruma); }
+  .lead { max-width: 60ch; color: var(--grafito); margin-bottom: 40px; }
+  .grid { display: grid; gap: 1px; background: var(--bruma); border: 1px solid var(--bruma); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .cell { background: var(--blanco); padding: 48px 32px; display: grid; place-items: center; min-height: 260px; position: relative; }
+  .cell.dark { background: var(--tinta); }
+  .cell.paper { background: var(--papel); }
+  .cell img { max-width: 100%; }
+  .cap { position: absolute; left: 16px; bottom: 12px; font: 500 .6875rem/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--piedra); }
+  .dark .cap { color: var(--ceniza); }
+  .sizes { display: flex; align-items: flex-end; gap: 32px; }
+  /* Paleta */
+  .swatches { display: grid; grid-template-columns: repeat(7, 1fr); border: 1px solid var(--bruma); }
+  .sw { min-height: 220px; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; font-size: .8125rem; line-height: 1.4; }
+  .sw b { font-weight: 600; display: block; font-size: .9375rem; }
+  .sw code { font: 500 .8125rem var(--sans); letter-spacing: .04em; }
+  .sw small { display: block; margin-top: 8px; opacity: .85; }
+  /* Tipografia */
+  .type { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .specimen-serif { font-family: var(--serif); font-variation-settings: "opsz" 96; font-weight: 500; font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1; letter-spacing: -.01em; }
+  .specimen-sans { font-family: var(--sans); font-weight: 500; font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1; letter-spacing: -.02em; }
+  .meta { margin-top: 16px; color: var(--piedra); font-size: .875rem; }
+  .scale > * + * { margin-top: 20px; }
+  .t-display { font: 500 3.5rem/1.02 var(--serif); font-variation-settings: "opsz" 96; letter-spacing: -.01em; }
+  .t-h2 { font: 500 2.25rem/1.1 var(--serif); font-variation-settings: "opsz" 72; }
+  .t-h3 { font: 500 1.5rem/1.2 var(--serif); font-variation-settings: "opsz" 36; }
+  .t-body { font: 400 1.0625rem/1.65 var(--sans); max-width: 58ch; color: var(--grafito); }
+  .t-label { font: 500 .75rem/1 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--piedra); }
+  .scale .row { display: grid; grid-template-columns: 120px 1fr; align-items: baseline; gap: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--bruma); }
+  .scale .row > span:first-child { font-size: .75rem; color: var(--piedra); }
+  /* Botones */
+  .buttons { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .btn { --bg: var(--tinta); --fg: var(--papel); appearance: none; border: 1px solid var(--tinta); background: var(--bg); color: var(--fg);
+    min-height: 52px; padding: 0 28px; display: inline-flex; align-items: center; gap: 12px; font: 500 .8125rem/1 var(--sans); letter-spacing: .16em; text-transform: uppercase;
+    border-radius: 0; cursor: pointer; position: relative; overflow: hidden; isolation: isolate;
+    transition: color .45s var(--ease-out), transform .15s var(--ease-out); }
+  .btn::before { content: ""; position: absolute; inset: 0; background: var(--papel); transform: scaleY(0); transform-origin: bottom; transition: transform .45s var(--ease-out); z-index: -1; }
+  .btn svg { width: 18px; height: 18px; transition: transform .45s var(--ease-out); }
+  .btn.ghost { --bg: transparent; --fg: var(--tinta); }
+  .btn.ghost::before { background: var(--tinta); }
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover { color: var(--tinta); }
+    .btn:hover::before { transform: scaleY(1); }
+    .btn:hover svg { transform: translateX(4px); }
+    .btn.ghost:hover { color: var(--papel); }
+  }
+  .btn:active { transform: scale(.98); }
+  .btn:focus-visible { outline: 2px solid var(--tinta); outline-offset: 3px; }
+  .link { font: 500 .9375rem var(--sans); color: var(--tinta); text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; padding-bottom: 4px; transition: background-size .45s var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) { .link:hover { background-size: 0 1px; background-position: 100% 100%; } }
+  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .rules h3 { font: 500 1.25rem/1.2 var(--serif); font-variation-settings: "opsz" 36; margin-bottom: 8px; }
+  .rules p, .rules li { color: var(--grafito); font-size: .9375rem; }
+  .rules ul { padding-left: 18px; }
+  footer { padding: 40px 0 64px; color: var(--piedra); font-size: .8125rem; }
+  @media (max-width: 860px) {
+    .g2, .g3, .type, .rules { grid-template-columns: 1fr; }
+    .swatches { grid-template-columns: repeat(2, 1fr); }
+    .sw { min-height: 140px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Paso 1 · Identidad visual · Propuesta</p>
+    <h1>Con Estilo</h1>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <h2>Logo</h2>
+      <p class="lead">Tomé la corona del cartel y la redibujé con cinco puntas afiladas, valles curvos y una banda separada por una luz fina. El nombre usa una didona de moda en lugar de la letra manuscrita: a tamaño chico se lee mejor y se ve más actual. El texto está convertido a trazos, así que el SVG no depende de ninguna fuente instalada.</p>
+      <div class="grid g2">
+        <div class="cell"><img src="logo/logo-vertical.svg" alt="Logo vertical" width="340"><span class="cap">Vertical</span></div>
+        <div class="cell dark"><img src="logo/logo-vertical-negativo.svg" alt="Logo vertical en negativo" width="340"><span class="cap">Vertical · negativo</span></div>
+        <div class="cell paper"><img src="logo/logo-horizontal.svg" alt="Logo horizontal" width="420"><span class="cap">Horizontal</span></div>
+        <div class="cell dark"><img src="logo/logo-horizontal-negativo.svg" alt="Logo horizontal en negativo" width="420"><span class="cap">Horizontal · negativo</span></div>
+      </div>
+      <div class="grid g3" style="margin-top:24px">
+        <div class="cell"><img src="logo/logotipo.svg" alt="Logotipo" width="260"><span class="cap">Logotipo · header</span></div>
+        <div class="cell"><div class="sizes">
+          <img src="logo/isotipo.svg" alt="" width="96">
+          <img src="logo/isotipo.svg" alt="" width="48">
+          <img src="logo/isotipo.svg" alt="" width="24">
+          <img src="logo/isotipo.svg" alt="" width="16">
+        </div><span class="cap">Isotipo · 96 a 16 px</span></div>
+        <div class="cell dark"><img src="logo/isotipo-negativo.svg" alt="" width="96"><span class="cap">Isotipo · favicon y avatar</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Paleta</h2>
+      <p class="lead">Sale del local: paredes blancas y muebles negros. Es monocromática, con grises cálidos para que no se sienta fría. El color lo van a poner las fotos de los trabajos, así que la interfaz no compite con los tonos de pelo.</p>
+      <div class="swatches">
+        <div class="sw" style="background:var(--tinta);color:var(--papel)"><b>Tinta</b><code>#151413</code><small>Texto principal, botones, fondos oscuros. 16,6:1 sobre Papel</small></div>
+        <div class="sw" style="background:var(--grafito);color:var(--papel)"><b>Grafito</b><code>#2A2826</code><small>Texto de párrafo, superficies oscuras secundarias. 13,3:1</small></div>
+        <div class="sw" style="background:var(--piedra);color:var(--papel)"><b>Piedra</b><code>#6B665F</code><small>Texto secundario y etiquetas sobre claro. 5,1:1 (AA)</small></div>
+        <div class="sw" style="background:var(--ceniza);color:var(--tinta)"><b>Ceniza</b><code>#A39D94</code><small>Texto secundario sobre oscuro (6,8:1). Solo decorativo sobre claro</small></div>
+        <div class="sw" style="background:var(--bruma);color:var(--tinta)"><b>Bruma</b><code>#DDD8D0</code><small>Filetes, bordes y divisores</small></div>
+        <div class="sw" style="background:var(--papel);color:var(--tinta)"><b>Papel</b><code>#F5F3EF</code><small>Fondo general del sitio</small></div>
+        <div class="sw" style="background:var(--blanco);color:var(--tinta)"><b>Blanco</b><code>#FFFFFF</code><small>Tarjetas y bloques que se despegan del fondo</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Tipografía</h2>
+      <p class="lead">Son dos familias, las dos variables y libres, y se van a autoalojar solo con el subset latino. Bodoni Moda cambia su contraste según el tamaño (eje óptico), así que en títulos grandes los trazos finos se afinan y en tamaños chicos se engrosan para no desaparecer.</p>
+      <div class="type">
+        <div>
+          <div class="specimen-serif">Aa Bb</div>
+          <p class="meta"><b>Bodoni Moda</b> · títulos, nombre y citas · 400 a 600 · eje óptico 6 a 96</p>
+        </div>
+        <div>
+          <div class="specimen-sans">Aa Bb</div>
+          <p class="meta"><b>Hanken Grotesk</b> · texto, navegación, botones y etiquetas · 400 a 600</p>
+        </div>
+      </div>
+      <div class="scale" style="margin-top:56px">
+        <div class="row"><span>Display · 56</span><span class="t-display">Tu pelo, bien cuidado</span></div>
+        <div class="row"><span>Título · 36</span><span class="t-h2">Color, corte y tratamientos</span></div>
+        <div class="row"><span>Subtítulo · 24</span><span class="t-h3">Balayage y babylights</span></div>
+        <div class="row"><span>Texto · 17</span><span class="t-body">Cada servicio empieza con un diagnóstico: vemos cómo está tu pelo, qué querés lograr y qué le conviene. Texto de muestra, el definitivo lo redacta Carla.</span></div>
+        <div class="row"><span>Etiqueta · 12</span><span class="t-label">Peluquería unisex · Parque Horizonte</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Botones y enlaces</h2>
+      <p class="lead">Son rectos, sin radio y sin degradés. Al pasar el mouse, un relleno sube desde la base y la flecha avanza. En el celular no quedan estados de hover pegados, y al tocar el botón se achica apenas. Miden 52 px de alto. Pasá el mouse para probarlos.</p>
+      <div class="buttons">
+        <button class="btn">Pedir turno por WhatsApp
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="btn ghost">Ver servicios</button>
+        <a class="link" href="#">Cómo llegar</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Reglas que vamos a respetar</h2>
+      <div class="rules" style="margin-top:24px">
+        <div><h3>Forma</h3><ul><li>Radio de borde cero en todo el sitio.</li><li>Filetes de 1 px en Bruma en lugar de sombras.</li><li>Nada de degradés ni brillos.</li></ul></div>
+        <div><h3>Texto</h3><ul><li>Sin rayas largas en el texto visible.</li><li>Sin frases infladas: se dice qué se hace y cómo.</li><li>Sin itálicas decorativas ni palabras de otro color en los títulos.</li></ul></div>
+        <div><h3>Movimiento</h3><ul><li>Una sola curva de salida suave para todo.</li><li>Las apariciones mueven posición, nunca parten de invisible.</li><li>Se respeta la opción de reducir movimiento.</li></ul></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Con Estilo · Peluquería Unisex · Propuesta de identidad, septiembre de 2026</div></footer>
+</body>
+</html>
