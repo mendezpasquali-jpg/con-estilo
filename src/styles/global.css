@@ -119,25 +119,27 @@
   }
   .oscuro .etiqueta { color: var(--color-ceniza); }
 
+  /* Títulos: eje óptico bajo a propósito. Con valores de cartel (72 a 96)
+     los trazos finos de Bodoni casi desaparecen en pantalla. */
   .display {
     font-family: var(--font-serif);
-    font-variation-settings: "opsz" 96;
-    font-weight: 450;
-    font-size: clamp(2.25rem, 5.6vw, 5.75rem);
-    line-height: 0.98;
-    letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 28;
+    font-weight: 500;
+    font-size: clamp(2.25rem, 5.4vw, 5.5rem);
+    line-height: 1;
+    letter-spacing: -0.012em;
   }
   .titulo {
     font-family: var(--font-serif);
-    font-variation-settings: "opsz" 72;
-    font-weight: 450;
-    font-size: clamp(2.375rem, 5.2vw, 4.5rem);
-    line-height: 1;
-    letter-spacing: -0.015em;
+    font-variation-settings: "opsz" 24;
+    font-weight: 500;
+    font-size: clamp(2.25rem, 4.8vw, 4.25rem);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
   }
   .subtitulo {
     font-family: var(--font-serif);
-    font-variation-settings: "opsz" 36;
+    font-variation-settings: "opsz" 16;
     font-weight: 500;
     font-size: clamp(1.375rem, 2.1vw, 1.75rem);
     line-height: 1.15;
@@ -145,8 +147,8 @@
   }
   .cita {
     font-family: var(--font-serif);
-    font-variation-settings: "opsz" 48;
-    font-weight: 400;
+    font-variation-settings: "opsz" 18;
+    font-weight: 450;
     font-size: clamp(1.5rem, 2.6vw, 2.25rem);
     line-height: 1.22;
     letter-spacing: -0.01em;
