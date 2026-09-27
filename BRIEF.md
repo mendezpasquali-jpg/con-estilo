@@ -24,9 +24,21 @@ El pedido original completo está en [docs/pedido-original.md](docs/pedido-origi
 
 ## Pendientes de la clienta
 
-- [ ] Bio de Carla: trayectoria, formación, filosofía (redacta la clienta)
-- [ ] Lista real de servicios y marcas de productos que usa
-- [ ] Fotos: local, Carla, trabajos, antes y después (con consentimiento de las clientas)
-- [ ] Qué reseñas de Google citar (con el nombre tal como figura en Google)
-- [ ] Dominio y hosting
-- [ ] Instagram, si lo abre más adelante
+El detalle, con archivo y línea, sale de `npm run pendientes`. En `npm run dev` se ven recuadrados en la página.
+
+**Para publicar (bloquean):**
+- [ ] Fotos: principal (Carla trabajando), retrato de Carla, 8 trabajos y 2 pares antes/después, con permiso de cada clienta
+- [ ] Bio de Carla: trayectoria, formación, forma de trabajar (la redacta ella)
+- [ ] Lista real de servicios, cómo los llama y marcas de productos que usa
+- [ ] Probar el enlace de WhatsApp (`wa.me/5493513874033`): si el número es fijo con WhatsApp Business, va sin el 9
+- [ ] Privacidad: nombre completo (o razón social) y CUIT de la responsable
+- [ ] Dominio y hosting (mientras tanto el sitio sale con `noindex`)
+
+**A confirmar (hay borrador):**
+- [ ] Frase principal y bajada de la portada
+- [ ] Los 4 pasos de "Cómo es un turno" (sobre todo pedir foto antes del turno)
+- [ ] Qué reseñas citar: Google muestra solo tres con nombre sin iniciar sesión
+
+**Más adelante:**
+- [ ] Instagram, si lo abre
+- [ ] Cargar la URL del sitio en la ficha de Google Business

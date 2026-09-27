@@ -1,0 +1,85 @@
+---
+// Foto optimizada (AVIF + WebP, varios anchos) o, mientras no exista, un
+// marcador sobrio del mismo tamaño que describe la foto que hace falta.
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Logo from './Logo.astro';
+
+interface Props {
+  imagen?: ImageMetadata;
+  alt?: string;
+  proporcion: string; // p. ej. "4 / 5"
+  falta: string; // descripción de la foto pendiente
+  anchos?: number[];
+  sizes?: string;
+  prioridad?: boolean;
+  tono?: 'claro' | 'oscuro';
+  class?: string;
+}
+const {
+  imagen,
+  alt = '',
+  proporcion,
+  falta,
+  anchos = [480, 800, 1200, 1600],
+  sizes = '(min-width: 64rem) 50vw, 100vw',
+  prioridad = false,
+  tono = 'claro',
+  class: clase,
+} = Astro.props;
+const dev = import.meta.env.DEV;
+---
+<div class:list={['foto', `foto-${tono}`, clase]} style={`aspect-ratio: ${proporcion}`}>
+  {
+    imagen ? (
+      <Picture
+        src={imagen}
+        alt={alt}
+        formats={['avif', 'webp']}
+        widths={anchos.filter((w) => w <= imagen.width)}
+        sizes={sizes}
+        loading={prioridad ? 'eager' : 'lazy'}
+        fetchpriority={prioridad ? 'high' : 'auto'}
+        decoding="async"
+      />
+    ) : (
+      <div class="marcador" aria-hidden="true" data-falta={dev ? falta : undefined}>
+        <Logo variante="isotipo" class="marcador-corona" decorativo />
+        {dev && <span class="marcador-nota">Foto pendiente · {falta}</span>}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .foto { position: relative; overflow: hidden; width: 100%; }
+  .foto :global(picture), .foto :global(img) { width: 100%; height: 100%; }
+  .foto :global(img) { object-fit: cover; }
+
+  .marcador {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    /* Trama muy leve para que el bloque no se lea como un error. */
+    background-image:
+      repeating-linear-gradient(135deg, transparent 0 11px, rgb(21 20 19 / 0.035) 11px 12px);
+  }
+  .foto-claro { background: #e9e5de; color: var(--color-bruma); }
+  .foto-claro .marcador :global(.marcador-corona) { color: #d6d0c6; }
+  .foto-oscuro { background: var(--color-grafito); }
+  .foto-oscuro .marcador {
+    background-image: repeating-linear-gradient(135deg, transparent 0 11px, rgb(245 243 239 / 0.035) 11px 12px);
+  }
+  .foto-oscuro .marcador :global(.marcador-corona) { color: #3a3734; }
+  .marcador :global(.marcador-corona) { width: clamp(3rem, 22%, 7rem); height: auto; }
+  .marcador-nota {
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    font: 500 0.6875rem/1.4 var(--font-sans);
+    letter-spacing: 0.04em;
+    color: #b4543a;
+  }
+</style>

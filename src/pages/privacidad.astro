@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+import Pendiente from '../components/Pendiente.astro';
+import { sitio, enlaceWhatsApp } from '../data/sitio';
+
+const actualizada = '27 de septiembre de 2026';
+---
+<Base
+  titulo="Privacidad · Con Estilo"
+  descripcion="Qué datos trata el sitio de Con Estilo, peluquería unisex en Córdoba, y cómo ejercer tus derechos."
+  barraTurno={false}
+>
+  <article class="contenedor legal">
+    <p class="etiqueta">Actualizada el {actualizada}</p>
+    <h1 class="titulo mt-6">Privacidad</h1>
+
+    <div class="legal-cuerpo mt-12">
+      <p class="lead">Este sitio no tiene formularios, no usa cookies y no mide visitas. Esta página explica qué datos entran en juego cuando lo usás.</p>
+
+      <h2>Quién es responsable</h2>
+      <Pendiente nota="Nombre completo (o razón social) y CUIT de quien figura como responsable de los datos.">
+        <p>{sitio.nombre}, {sitio.direccion.calle}, {sitio.direccion.barrio}, {sitio.direccion.ciudad}. Teléfono {sitio.telefono.visible}.</p>
+      </Pendiente>
+
+      <h2>Qué datos se tratan</h2>
+      <p>
+        El sitio no te pide datos. Si escribís por WhatsApp o llamás por teléfono, recibimos lo que vos compartas (tu nombre, tu número y lo que cuentes en el mensaje) y lo usamos
+        solo para darte turno y responder tu consulta. No lo vendemos ni lo cedemos a terceros.
+      </p>
+
+      <h2>Servicios de terceros</h2>
+      <p>
+        <b>WhatsApp.</b> Los botones de turno abren WhatsApp, un servicio de Meta con su propia política de privacidad.
+      </p>
+      <p>
+        <b>Google Maps.</b> El mapa de la sección Visitanos no se carga hasta que tocás “Ver mapa”. Recién ahí tu navegador se conecta con Google, que puede registrar esa visita
+        según su política de privacidad. Los enlaces “Cómo llegar” y “Leer todas en Google” te llevan al sitio de Google.
+      </p>
+      <p>
+        <b>Alojamiento.</b> Como cualquier servidor web, el que aloja este sitio puede registrar datos técnicos de cada visita (dirección IP, navegador, fecha) por seguridad.
+      </p>
+
+      <h2>Tus derechos</h2>
+      <p>
+        Según la Ley 25.326 de Protección de Datos Personales, podés pedir acceso, corrección o eliminación de tus datos escribiendo por
+        <a href={enlaceWhatsApp('Hola, quería hacer una consulta sobre mis datos personales.')} class="underline underline-offset-4" target="_blank" rel="noopener">WhatsApp</a>.
+        La Agencia de Acceso a la Información Pública, órgano de control de esa ley, atiende las denuncias por incumplimiento.
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .legal { padding-top: calc(var(--alto-header) + clamp(3rem, 8vw, 6rem)); padding-bottom: clamp(5rem, 10vw, 8rem); }
+  .legal-cuerpo { max-width: 42rem; }
+  .legal-cuerpo :global(h2) {
+    margin-top: 3rem;
+    font-family: var(--font-serif);
+    font-variation-settings: 'opsz' 36;
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .legal-cuerpo :global(p) { margin-top: 1rem; color: var(--color-grafito); }
+  .legal-cuerpo :global(b) { font-weight: 600; color: var(--color-tinta); }
+</style>

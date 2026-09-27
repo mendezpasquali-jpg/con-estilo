@@ -1,0 +1,86 @@
+---
+// "Abierto ahora" / "Cerrado, abre el martes a las 10 h", calculado en el
+// navegador con la hora de Córdoba. Sin JS queda el resumen de horarios.
+import { sitio, zonaHoraria, horarioAgrupado } from '../data/sitio';
+
+interface Props { class?: string }
+const { class: clase } = Astro.props;
+const resumen = horarioAgrupado().map((h) => `${h.dias}, ${h.horas}`).join(' · ');
+---
+<p class:list={['estado', clase]} data-estado-abierto data-horarios={JSON.stringify(sitio.horarios)} data-zona={zonaHoraria}>
+  <span class="punto" aria-hidden="true"></span>
+  <span class="texto">{resumen}</span>
+</p>
+
+<style>
+  .estado { display: inline-flex; align-items: center; gap: 0.6rem; }
+  .punto {
+    width: 0.5rem;
+    height: 0.5rem;
+    flex: none;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+  }
+  .estado[data-abierto='si'] .punto { background: currentColor; }
+  @media (prefers-reduced-motion: no-preference) {
+    .estado[data-abierto='si'] .punto { animation: late 2.4s ease-in-out infinite; }
+  }
+  @keyframes late { 50% { transform: scale(0.6); } }
+</style>
+
+<script>
+  type Horario = { dia: number; abre: string; cierra: string };
+  const nombres = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  const hora = (h: string) => {
+    const [hh, mm] = h.split(':');
+    return mm === '00' ? String(Number(hh)) : `${Number(hh)}:${mm}`;
+  };
+  const minutos = (h: string) => {
+    const [hh, mm] = h.split(':').map(Number);
+    return hh * 60 + mm;
+  };
+
+  function ahoraEn(zona: string) {
+    const partes = new Intl.DateTimeFormat('en-US', {
+      timeZone: zona,
+      weekday: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(new Date());
+    const v = (t: string) => partes.find((p) => p.type === t)!.value;
+    const dia = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(v('weekday'));
+    return { dia, min: Number(v('hour')) * 60 + Number(v('minute')) };
+  }
+
+  function calcular(horarios: Horario[], zona: string) {
+    const { dia, min } = ahoraEn(zona);
+    const hoy = horarios.find((h) => h.dia === dia);
+    if (hoy && min >= minutos(hoy.abre) && min < minutos(hoy.cierra)) {
+      return { abierto: true, texto: `Abierto ahora · cierra a las ${hora(hoy.cierra)} h` };
+    }
+    if (hoy && min < minutos(hoy.abre)) {
+      return { abierto: false, texto: `Cerrado · abre hoy a las ${hora(hoy.abre)} h` };
+    }
+    for (let i = 1; i <= 7; i++) {
+      const d = (dia + i) % 7;
+      const h = horarios.find((x) => x.dia === d);
+      if (h) {
+        const cuando = i === 1 ? 'mañana' : `el ${nombres[d]}`;
+        return { abierto: false, texto: `Cerrado · abre ${cuando} a las ${hora(h.abre)} h` };
+      }
+    }
+    return null;
+  }
+
+  function pintar() {
+    document.querySelectorAll<HTMLElement>('[data-estado-abierto]').forEach((el) => {
+      const r = calcular(JSON.parse(el.dataset.horarios!), el.dataset.zona!);
+      if (!r) return;
+      el.dataset.abierto = r.abierto ? 'si' : 'no';
+      el.querySelector('.texto')!.textContent = r.texto;
+    });
+  }
+  pintar();
+  setInterval(pintar, 60_000);
+</script>

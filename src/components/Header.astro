@@ -1,0 +1,258 @@
+---
+import Logo from './Logo.astro';
+import Icono from './Icono.astro';
+import { sitio, enlaceWhatsApp, horarioAgrupado, direccionCompleta } from '../data/sitio';
+
+const enInicio = Astro.url.pathname === '/' || Astro.url.pathname === '/index.html';
+const pre = enInicio ? '' : '/';
+const secciones = [
+  { href: `${pre}#servicios`, texto: 'Servicios' },
+  { href: `${pre}#carla`, texto: 'Carla' },
+  { href: `${pre}#trabajos`, texto: 'Trabajos' },
+  { href: `${pre}#resenas`, texto: 'Reseñas' },
+  { href: `${pre}#visitanos`, texto: 'Visitanos' },
+];
+---
+<header id="header" class="header" data-estado="arriba">
+  <div class="contenedor flex h-full items-center justify-between gap-6">
+    <a href="/" class="marca" aria-label="Con Estilo, ir al inicio">
+      <Logo variante="logotipo" class="h-[1.6rem] w-auto md:h-[1.85rem]" decorativo />
+    </a>
+
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="flex items-center gap-9">
+        {secciones.map((s) => (
+          <li><a href={s.href} class="nav-enlace">{s.texto}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a href={enlaceWhatsApp()} class="btn btn-header hidden sm:inline-flex" target="_blank" rel="noopener">
+        Pedir turno
+      </a>
+      <button type="button" class="menu-boton lg:hidden" aria-haspopup="dialog" aria-controls="menu-movil" data-abrir-menu>
+        <span>Menú</span>
+        <span class="menu-lineas" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog id="menu-movil" class="menu oscuro" aria-label="Menú">
+  <div class="contenedor flex h-full flex-col">
+    <div class="flex h-[var(--alto-header)] items-center justify-between">
+      <Logo variante="logotipo" class="h-[1.6rem] w-auto" decorativo />
+      <button type="button" class="menu-boton" data-cerrar-menu>
+        <span>Cerrar</span>
+        <Icono nombre="cerrar" class="h-5 w-5" />
+      </button>
+    </div>
+
+    <nav aria-label="Secciones" class="flex-1 pt-8">
+      <ol class="menu-lista">
+        {secciones.map((s, i) => (
+          <li style={`--i:${i}`}>
+            <a href={s.href} data-cerrar-menu>
+              <span class="etiqueta tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+              <span class="menu-texto">{s.texto}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="menu-pie grid gap-6 pb-8 text-sm">
+      <div class="grid gap-1 text-bruma">
+        <p>{direccionCompleta}</p>
+        {horarioAgrupado().map((h) => <p>{h.dias}, {h.horas}</p>)}
+      </div>
+      <a href={enlaceWhatsApp()} class="btn w-full" target="_blank" rel="noopener">
+        <Icono nombre="whatsapp" /> Pedir turno por WhatsApp
+      </a>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    height: var(--alto-header);
+    color: var(--color-tinta);
+    transition:
+      transform var(--dur-media) var(--ease-out),
+      background-color var(--dur-media) var(--ease-out),
+      box-shadow var(--dur-media) var(--ease-out);
+  }
+  .header[data-estado='fondo'],
+  .header[data-estado='oculto'] {
+    background: color-mix(in srgb, var(--color-papel) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: 0 1px 0 var(--color-bruma);
+  }
+  .header[data-estado='oculto'] { transform: translateY(-100%); }
+
+  .marca { display: inline-flex; align-items: center; min-height: 3rem; color: inherit; }
+
+  .nav-enlace {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 3rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--color-grafito);
+    text-decoration: none;
+    transition: color var(--dur-rapida) var(--ease-out);
+  }
+  .nav-enlace::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.8rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--dur-media) var(--ease-out);
+  }
+  .nav-enlace[aria-current='true'] { color: var(--color-tinta); }
+  .nav-enlace[aria-current='true']::after { transform: scaleX(1); }
+  @media (hover: hover) and (pointer: fine) {
+    .nav-enlace:hover { color: var(--color-tinta); }
+    .nav-enlace:hover::after { transform: scaleX(1); transform-origin: left; }
+  }
+
+  .btn-header { min-height: 3rem; padding-inline: 1.25rem; font-size: 0.75rem; }
+
+  .menu-boton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3rem;
+    padding: 0 0.25rem;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: 500 0.75rem/1 var(--font-sans);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  /* Los estilos de componente no van en capa y le ganan a las utilidades de
+     Tailwind: el ocultamiento en escritorio tiene que vivir acá. */
+  @media (min-width: 64rem) { .header .menu-boton { display: none; } }
+  .menu-lineas { display: grid; gap: 5px; width: 22px; }
+  .menu-lineas i { display: block; height: 1px; background: currentColor; }
+  .menu-lineas i:last-child { width: 70%; justify-self: end; }
+
+  /* Menú móvil */
+  .menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--color-tinta);
+    color: var(--color-papel);
+    overscroll-behavior: contain;
+  }
+  .menu::backdrop { background: transparent; }
+  .menu-lista { display: grid; gap: 0.25rem; }
+  .menu-lista li { overflow: hidden; }
+  .menu-lista a {
+    display: flex;
+    align-items: baseline;
+    gap: 1.25rem;
+    padding-block: 0.4rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  .menu-texto {
+    font-family: var(--font-serif);
+    font-variation-settings: 'opsz' 72;
+    font-weight: 450;
+    font-size: clamp(2.5rem, 11vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .menu-pie { border-top: 1px solid color-mix(in srgb, var(--color-papel) 16%, transparent); padding-top: 1.5rem; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .menu[open] { animation: menu-entra 600ms var(--ease-out); }
+    .menu[open] .menu-lista a { animation: sube 800ms var(--ease-out) both; animation-delay: calc(120ms + var(--i) * 60ms); }
+    .menu[open] .menu-pie { animation: sube 800ms var(--ease-out) 420ms both; }
+  }
+  @keyframes menu-entra { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+  @keyframes sube { from { transform: translateY(110%); } to { transform: none; } }
+</style>
+
+<script>
+  const header = document.getElementById('header')!;
+  let ultimoY = window.scrollY;
+  let pendiente = false;
+
+  function actualizar() {
+    const y = window.scrollY;
+    const bajando = y > ultimoY;
+    let estado = 'arriba';
+    if (y > 24) estado = 'fondo';
+    if (y > 480 && bajando && y - ultimoY > 2) estado = 'oculto';
+    else if (header.dataset.estado === 'oculto' && bajando) estado = 'oculto';
+    header.dataset.estado = estado;
+    ultimoY = y;
+    pendiente = false;
+  }
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!pendiente) {
+        pendiente = true;
+        requestAnimationFrame(actualizar);
+      }
+    },
+    { passive: true },
+  );
+  actualizar();
+
+  // El header vuelve a aparecer si algo dentro recibe foco con el teclado.
+  header.addEventListener('focusin', () => (header.dataset.estado = window.scrollY > 24 ? 'fondo' : 'arriba'));
+
+  // Sección activa en la navegación.
+  const enlaces = [...document.querySelectorAll<HTMLAnchorElement>('.nav-enlace')];
+  const porId = new Map(enlaces.map((a) => [a.hash.slice(1), a]));
+  const secciones = [...porId.keys()].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+  if (secciones.length) {
+    const io = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) {
+          const a = porId.get(e.target.id);
+          if (!a) continue;
+          if (e.isIntersecting) {
+            enlaces.forEach((x) => x.removeAttribute('aria-current'));
+            a.setAttribute('aria-current', 'true');
+          }
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    secciones.forEach((s) => io.observe(s));
+  }
+
+  // Menú móvil con <dialog>: foco atrapado y Escape nativos.
+  const menu = document.getElementById('menu-movil') as HTMLDialogElement;
+  document.querySelector('[data-abrir-menu]')?.addEventListener('click', () => {
+    menu.showModal();
+    document.documentElement.style.overflow = 'hidden';
+  });
+  menu.addEventListener('close', () => (document.documentElement.style.overflow = ''));
+  menu.querySelectorAll('[data-cerrar-menu]').forEach((el) => el.addEventListener('click', () => menu.close()));
+</script>

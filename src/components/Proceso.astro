@@ -1,0 +1,44 @@
+---
+import EncabezadoSeccion from './EncabezadoSeccion.astro';
+import Pendiente from './Pendiente.astro';
+import { proceso } from '../data/contenido';
+---
+<section id="proceso" class="seccion" aria-labelledby="proceso-titulo">
+  <div class="contenedor">
+    <EncabezadoSeccion numero="03" texto="Cómo es un turno" />
+
+    <div class="mt-12 grid gap-6 lg:mt-16 lg:grid-cols-12 lg:gap-8">
+      <h2 id="proceso-titulo" class="titulo lg:col-span-6" data-aparece>Primero se mira el pelo, después se decide</h2>
+    </div>
+
+    <Pendiente nota={proceso.pendiente} class="mt-14 lg:mt-20">
+      <ol class="pasos">
+        {proceso.pasos.map((p, i) => (
+          <li data-aparece style={`--orden:${i}`}>
+            <span class="paso-numero" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="subtitulo mt-8">{p.titulo}</h3>
+            <p class="mt-3 text-piedra">{p.texto}</p>
+          </li>
+        ))}
+      </ol>
+    </Pendiente>
+  </div>
+</section>
+
+<style>
+  .pasos { display: grid; gap: 3rem 2rem; counter-reset: paso; }
+  @media (min-width: 40rem) { .pasos { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .pasos { grid-template-columns: repeat(4, 1fr); } }
+  .pasos li { position: relative; padding-top: 1.75rem; border-top: 1px solid var(--color-tinta); }
+  .paso-numero {
+    display: block;
+    font-family: var(--font-serif);
+    font-variation-settings: 'opsz' 96;
+    font-weight: 400;
+    font-size: clamp(3.5rem, 6vw, 5rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--color-piedra);
+    font-feature-settings: 'lnum', 'tnum';
+  }
+</style>

@@ -1,0 +1,118 @@
+---
+// Comparador antes / después. Un <input type="range"> real maneja la
+// posición: funciona con mouse, dedo y teclado, y lo anuncian los lectores.
+import { Image } from 'astro:assets';
+import Icono from './Icono.astro';
+import type { AntesDespues } from '../data/galeria';
+
+interface Props { item: AntesDespues; id: string }
+const { item, id } = Astro.props;
+const dev = import.meta.env.DEV;
+---
+<figure class="ad" data-ad style="--pos: 50%">
+  <div class="ad-marco">
+    <div class="ad-capa ad-despues">
+      {item.despues ? (
+        <Image src={item.despues} alt={`${item.titulo}, después`} widths={[600, 900, 1200]} sizes="(min-width: 64rem) 45vw, 100vw" />
+      ) : (
+        <div class="ad-vacio ad-vacio-despues" />
+      )}
+      <span class="ad-chip ad-chip-der">Después</span>
+    </div>
+    <div class="ad-capa ad-antes" aria-hidden="true">
+      {item.antes ? (
+        <Image src={item.antes} alt="" widths={[600, 900, 1200]} sizes="(min-width: 64rem) 45vw, 100vw" />
+      ) : (
+        <div class="ad-vacio ad-vacio-antes" />
+      )}
+      <span class="ad-chip">Antes</span>
+    </div>
+    <div class="ad-divisor" aria-hidden="true">
+      <span class="ad-manija"><Icono nombre="arrastrar" class="h-4 w-4" /></span>
+    </div>
+    <label class="sr-only" for={id}>Comparar antes y después: {item.titulo}</label>
+    <input id={id} class="ad-rango" type="range" min="0" max="100" value="50" step="1" aria-valuetext="50% antes" />
+    {dev && !item.antes && <span class="ad-nota">Foto pendiente · {item.pendiente}</span>}
+  </div>
+  <figcaption class="mt-5 flex flex-wrap items-baseline justify-between gap-2">
+    <span class="subtitulo">{item.titulo}</span>
+    <span class="text-piedra">{item.detalle}</span>
+  </figcaption>
+</figure>
+
+<style>
+  .ad-marco { position: relative; aspect-ratio: 4 / 5; overflow: hidden; user-select: none; touch-action: pan-y; }
+  @media (min-width: 48rem) { .ad-marco { aspect-ratio: 1; } }
+  .ad-capa { position: absolute; inset: 0; }
+  .ad-capa :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .ad-antes { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .ad-vacio { width: 100%; height: 100%; }
+  .ad-vacio-antes { background: #d9d3c9 repeating-linear-gradient(135deg, transparent 0 11px, rgb(21 20 19 / 0.04) 11px 12px); }
+  .ad-vacio-despues { background: #ebe7e0 repeating-linear-gradient(45deg, transparent 0 11px, rgb(21 20 19 / 0.03) 11px 12px); }
+  .ad-chip {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.35rem 0.6rem;
+    background: var(--color-papel);
+    font: 500 0.6875rem/1 var(--font-sans);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .ad-chip-der { left: auto; right: 1rem; }
+  .ad-divisor {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 1px;
+    background: var(--color-papel);
+    pointer-events: none;
+  }
+  .ad-manija {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    transform: translate(-50%, -50%);
+    background: var(--color-papel);
+    color: var(--color-tinta);
+    border-radius: 50%;
+    transition: transform var(--dur-rapida) var(--ease-out);
+  }
+  .ad-rango {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+  }
+  .ad-marco:has(.ad-rango:focus-visible) .ad-manija { outline: 2px solid var(--color-tinta); outline-offset: 3px; }
+  .ad-marco:has(.ad-rango:active) .ad-manija { transform: translate(-50%, -50%) scale(0.92); }
+  .ad-nota {
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    font: 500 0.6875rem/1.4 var(--font-sans);
+    color: #b4543a;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ad]').forEach((fig) => {
+    const rango = fig.querySelector<HTMLInputElement>('.ad-rango')!;
+    const pintar = () => {
+      fig.style.setProperty('--pos', `${rango.value}%`);
+      rango.setAttribute('aria-valuetext', `${rango.value}% antes`);
+    };
+    rango.addEventListener('input', pintar);
+    pintar();
+  });
+</script>

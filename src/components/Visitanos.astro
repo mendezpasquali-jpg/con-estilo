@@ -1,0 +1,142 @@
+---
+import EncabezadoSeccion from './EncabezadoSeccion.astro';
+import Icono from './Icono.astro';
+import EstadoAbierto from './EstadoAbierto.astro';
+import { sitio, enlaceWhatsApp, horarioSemanal } from '../data/sitio';
+
+const semana = horarioSemanal();
+---
+<section id="visitanos" class="seccion" aria-labelledby="visitanos-titulo">
+  <div class="contenedor">
+    <EncabezadoSeccion numero="07" texto="Visitanos" />
+
+    <div class="mt-12 grid gap-14 lg:mt-16 lg:grid-cols-12 lg:gap-8">
+      <div class="lg:col-span-5">
+        <h2 id="visitanos-titulo" class="titulo" data-aparece>
+          {sitio.direccion.calle},<br />{sitio.direccion.barrio}
+        </h2>
+        <address class="mt-6 not-italic text-grafito" data-aparece style="--orden:1">
+          {sitio.direccion.ciudad}, {sitio.direccion.codigoPostal}
+        </address>
+
+        <div class="mt-12" data-aparece style="--orden:2">
+          <div class="flex items-baseline justify-between gap-4">
+            <h3 class="etiqueta">Horario</h3>
+            <EstadoAbierto class="text-sm text-grafito" />
+          </div>
+          <table class="horario mt-4">
+            <caption class="sr-only">Horario de atención</caption>
+            <tbody>
+              {semana.map((d) => (
+                <tr data-dia={d.dia} class:list={[d.horas === 'Cerrado' && 'cerrado']}>
+                  <th scope="row">{d.nombre}</th>
+                  <td>{d.horas}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-12 flex flex-col gap-3 sm:flex-row sm:flex-wrap" data-aparece style="--orden:3">
+          <a href={enlaceWhatsApp()} class="btn" target="_blank" rel="noopener">
+            <Icono nombre="whatsapp" /> Pedir turno
+          </a>
+          <a href={sitio.telefono.enlace} class="btn btn-contorno">
+            <Icono nombre="telefono" /> {sitio.telefono.visible}
+          </a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-6 lg:col-start-7" data-aparece style="--orden:1">
+        <div class="mapa oscuro" data-mapa data-src={sitio.google.mapaEmbebido}>
+          <div class="mapa-fachada">
+            <svg class="mapa-trama" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <g fill="none" stroke="currentColor" stroke-width="1">
+                <path d="M-20 90 L420 60" /><path d="M-20 170 L420 150" /><path d="M-20 262 L420 250" /><path d="M-20 340 L420 332" />
+                <path d="M70 -20 L95 420" /><path d="M160 -20 L178 420" /><path d="M250 -20 L262 420" /><path d="M335 -20 L344 420" />
+                <path d="M-20 400 C 120 300, 220 260, 420 120" stroke-width="2" />
+              </g>
+            </svg>
+            <div class="mapa-pin" aria-hidden="true">
+              <span></span>
+            </div>
+            <div class="mapa-info">
+              <p class="etiqueta">{sitio.direccion.barrio} · {sitio.direccion.ciudad}</p>
+              <p class="subtitulo mt-2 text-papel">{sitio.nombre}</p>
+              <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
+                <button type="button" class="btn" data-cargar-mapa>Ver mapa</button>
+                <a href={sitio.google.comoLlegar} class="enlace text-papel" target="_blank" rel="noopener">
+                  Cómo llegar <Icono nombre="flecha-diagonal" />
+                </a>
+              </div>
+              <p class="mt-4 text-xs text-ceniza">El mapa lo sirve Google: se carga solo si lo pedís.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .horario { width: 100%; border-collapse: collapse; border-top: 1px solid var(--color-tinta); }
+  .horario tr { border-bottom: 1px solid var(--color-bruma); }
+  .horario th, .horario td { padding: 0.85rem 0; text-align: left; font-weight: 400; }
+  .horario td { text-align: right; font-feature-settings: 'tnum'; }
+  .horario tr.cerrado { color: var(--color-piedra); }
+  .horario tr.hoy th, .horario tr.hoy td { font-weight: 600; color: var(--color-tinta); }
+  .horario tr.hoy th::after { content: ' · hoy'; font-weight: 400; color: var(--color-piedra); }
+
+  .mapa { position: relative; aspect-ratio: 1; overflow: hidden; }
+  @media (min-width: 64rem) { .mapa { aspect-ratio: 5 / 6; } }
+  .mapa :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: grayscale(1) contrast(1.05); }
+  .mapa-fachada { position: absolute; inset: 0; }
+  .mapa-trama { position: absolute; inset: 0; width: 100%; height: 100%; color: #34312e; }
+  .mapa-pin { position: absolute; left: 52%; top: 42%; transform: translate(-50%, -50%); }
+  .mapa-pin span {
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    background: var(--color-papel);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0.5rem rgb(245 243 239 / 0.12), 0 0 0 1.25rem rgb(245 243 239 / 0.05);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mapa-pin span { animation: pulso 3s var(--ease-out) infinite; }
+  }
+  @keyframes pulso {
+    0% { box-shadow: 0 0 0 0 rgb(245 243 239 / 0.3), 0 0 0 0 rgb(245 243 239 / 0.1); }
+    100% { box-shadow: 0 0 0 1.25rem rgb(245 243 239 / 0), 0 0 0 2.5rem rgb(245 243 239 / 0); }
+  }
+  .mapa-info {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    background: var(--color-tinta);
+    border-top: 1px solid color-mix(in srgb, var(--color-papel) 16%, transparent);
+  }
+</style>
+
+<script>
+  // Día de hoy en la tabla (hora de Córdoba).
+  const dia = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(
+    new Intl.DateTimeFormat('en-US', { timeZone: 'America/Argentina/Cordoba', weekday: 'short' }).format(new Date()),
+  );
+  document.querySelector(`.horario tr[data-dia="${dia}"]`)?.classList.add('hoy');
+
+  // Mapa bajo demanda.
+  document.querySelector('[data-cargar-mapa]')?.addEventListener('click', () => {
+    const cont = document.querySelector<HTMLElement>('[data-mapa]')!;
+    const iframe = document.createElement('iframe');
+    iframe.src = cont.dataset.src!;
+    iframe.title = 'Mapa de Con Estilo en Google Maps';
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.allowFullscreen = true;
+    cont.querySelector('.mapa-fachada')?.remove();
+    cont.append(iframe);
+    iframe.focus();
+  });
+</script>

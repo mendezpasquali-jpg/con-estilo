@@ -1,0 +1,9 @@
+---
+interface Props { numero: string; texto: string }
+const { numero, texto } = Astro.props;
+---
+<div class="encabezado-seccion etiqueta" aria-hidden="true">
+  <span class="tabular-nums">{numero}</span>
+  <span>{texto}</span>
+  <span class="linea"></span>
+</div>

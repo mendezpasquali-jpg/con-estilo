@@ -1,0 +1,354 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import EncabezadoSeccion from './EncabezadoSeccion.astro';
+import AntesDespues from './AntesDespues.astro';
+import Icono from './Icono.astro';
+import Logo from './Logo.astro';
+import Pendiente from './Pendiente.astro';
+import { trabajos, antesDespues, filtros, pendienteGaleria } from '../data/galeria';
+
+const dev = import.meta.env.DEV;
+// Versión grande para el visor, generada en el build.
+const grandes = await Promise.all(
+  trabajos.map((t) => (t.imagen ? getImage({ src: t.imagen, width: 1600, format: 'webp' }).then((r) => r.src) : null)),
+);
+---
+<section id="trabajos" class="seccion galeria-seccion" aria-labelledby="trabajos-titulo">
+  <div class="contenedor">
+    <EncabezadoSeccion numero="04" texto="Trabajos" />
+
+    <div class="mt-12 flex flex-col gap-8 lg:mt-16 lg:flex-row lg:items-end lg:justify-between">
+      <h2 id="trabajos-titulo" class="titulo max-w-[40rem]" data-aparece>Color, cortes y peinados hechos en el local</h2>
+
+      <div class="filtros" role="group" aria-label="Filtrar trabajos" data-aparece style="--orden:1">
+        {filtros.map((f, i) => (
+          <button type="button" class="filtro" data-filtro={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+            {f.nombre}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <Pendiente nota={pendienteGaleria} class="grilla-caja mt-12 lg:mt-14">
+      <ul class="grilla" data-grilla>
+        {trabajos.map((t, i) => (
+          <li class={`item item-${t.formato}`} data-categoria={t.filtro} data-aparece style={`--orden:${i % 4}`}>
+            <button
+              type="button"
+              class="item-boton"
+              data-indice={i}
+              data-grande={grandes[i] ?? ''}
+              data-titulo={t.titulo}
+              aria-label={`Ver ${t.titulo} en grande`}
+            >
+              {t.imagen ? (
+                <Picture src={t.imagen} alt={t.alt ?? t.titulo} formats={['avif', 'webp']} widths={[400, 700, 1000]} sizes="(min-width: 64rem) 25vw, 50vw" />
+              ) : (
+                <span class="item-vacio">
+                  <Logo variante="isotipo" class="item-corona" decorativo />
+                  {dev && <span class="item-nota">{t.pendiente}</span>}
+                </span>
+              )}
+              <span class="item-pie">
+                <span>{t.titulo}</span>
+                <Icono nombre="mas" class="h-4 w-4" />
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </Pendiente>
+
+    <div class="mt-24 grid gap-14 md:grid-cols-2 md:gap-8 lg:mt-32">
+      {antesDespues.map((a, i) => (
+        <div data-aparece style={`--orden:${i}`}>
+          <AntesDespues item={a} id={`ad-${i}`} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<dialog class="visor oscuro" aria-label="Trabajo ampliado" data-visor>
+  <div class="visor-barra contenedor">
+    <p class="etiqueta" data-visor-contador></p>
+    <button type="button" class="visor-control" data-visor-cerrar aria-label="Cerrar">
+      <Icono nombre="cerrar" class="h-6 w-6" />
+    </button>
+  </div>
+  <div class="visor-escenario">
+    <button type="button" class="visor-control visor-nav" data-visor-anterior aria-label="Trabajo anterior">
+      <Icono nombre="anterior" class="h-6 w-6" />
+    </button>
+    <figure class="visor-figura">
+      <div class="visor-imagen" data-visor-imagen></div>
+      <figcaption class="subtitulo mt-5 text-center" data-visor-titulo></figcaption>
+    </figure>
+    <button type="button" class="visor-control visor-nav" data-visor-siguiente aria-label="Trabajo siguiente">
+      <Icono nombre="siguiente" class="h-6 w-6" />
+    </button>
+  </div>
+</dialog>
+
+<style>
+  .galeria-seccion { background: var(--color-blanco); }
+  .galeria-seccion :global(.grilla-caja) { container-type: inline-size; }
+
+  .filtros {
+    display: flex;
+    gap: 1.5rem;
+    margin-inline: calc(var(--margen) * -1);
+    padding-inline: var(--margen);
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .filtros::-webkit-scrollbar { display: none; }
+  @media (min-width: 64rem) { .filtros { margin-inline: 0; padding-inline: 0; overflow: visible; } }
+  .filtro { flex: none; }
+  .filtro {
+    position: relative;
+    min-height: 3rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--color-piedra);
+    font: 500 0.8125rem/1 var(--font-sans);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition: color var(--dur-rapida) var(--ease-out);
+  }
+  .filtro::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.7rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-media) var(--ease-out);
+  }
+  .filtro[aria-pressed='true'] { color: var(--color-tinta); }
+  .filtro[aria-pressed='true']::after { transform: scaleX(1); }
+  @media (hover: hover) and (pointer: fine) { .filtro:hover { color: var(--color-tinta); } }
+
+  .grilla {
+    --cols: 2;
+    --gap: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    /* Filas cuadradas: alto = ancho de una columna. */
+    grid-auto-rows: calc((100cqi - (var(--cols) - 1) * var(--gap)) / var(--cols));
+    grid-auto-flow: dense;
+    gap: var(--gap);
+  }
+  @media (min-width: 64rem) { .grilla { --cols: 4; --gap: 0.75rem; } }
+  .item { min-height: 0; }
+  .item-vertical { grid-row: span 2; }
+  .item-horizontal { grid-column: span 2; }
+  .item[hidden] { display: none; }
+
+  .item-boton {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    background: #efece6;
+    color: var(--color-tinta);
+    text-align: left;
+    cursor: zoom-in;
+  }
+  .item-boton :global(picture), .item-boton :global(img) { width: 100%; height: 100%; }
+  .item-boton :global(img) { object-fit: cover; transition: transform 1.2s var(--ease-out); }
+  .item-vacio {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background-image: repeating-linear-gradient(135deg, transparent 0 11px, rgb(21 20 19 / 0.03) 11px 12px);
+    transition: transform 1.2s var(--ease-out);
+  }
+  .item-vacio :global(.item-corona) { width: clamp(2.5rem, 18%, 4.5rem); height: auto; color: #dcd6cc; }
+  .item-nota {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    font: 500 0.6875rem/1.4 var(--font-sans);
+    color: #b4543a;
+  }
+  .item-pie {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    background: var(--color-papel);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transform: translateY(101%);
+    transition: transform var(--dur-media) var(--ease-out);
+  }
+  @media (hover: none) { .item-pie { transform: none; background: color-mix(in srgb, var(--color-papel) 92%, transparent); padding: 0.7rem 0.85rem; font-size: 0.8125rem; } }
+  @media (hover: hover) and (pointer: fine) {
+    .item-boton:hover :global(img), .item-boton:hover .item-vacio { transform: scale(1.04); }
+    .item-boton:hover .item-pie { transform: none; }
+  }
+  .item-boton:focus-visible { outline-offset: -2px; }
+  .item-boton:focus-visible .item-pie { transform: none; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .item.entra { animation: entra 700ms var(--ease-out) both; }
+  }
+  @keyframes entra { from { transform: translateY(1.5rem) scale(0.98); } to { transform: none; } }
+
+  /* Visor */
+  .visor {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--color-tinta);
+    color: var(--color-papel);
+    overscroll-behavior: contain;
+  }
+  .visor[open] { display: grid; grid-template-rows: auto 1fr; }
+  .visor::backdrop { background: rgb(21 20 19 / 0.6); }
+  .visor-barra { display: flex; align-items: center; justify-content: space-between; height: var(--alto-header); }
+  .visor-escenario {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 0;
+    padding: 0 var(--margen) 2rem;
+    touch-action: pan-y;
+  }
+  .visor-figura { min-height: 0; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+  .visor-imagen { position: relative; flex: 0 1 auto; min-height: 0; max-height: calc(100dvh - var(--alto-header) - 6rem); display: grid; place-items: center; }
+  .visor-imagen :global(img) { max-width: 100%; max-height: calc(100dvh - var(--alto-header) - 6rem); object-fit: contain; }
+  .visor-imagen :global(.vacio) {
+    width: min(70vw, 32rem);
+    aspect-ratio: 4 / 5;
+    display: grid;
+    place-items: center;
+    background: var(--color-grafito) repeating-linear-gradient(135deg, transparent 0 11px, rgb(245 243 239 / 0.035) 11px 12px);
+  }
+  .visor-imagen :global(.vacio svg) { width: 5rem; height: auto; color: #3a3734; }
+  .visor-control {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    background: none;
+    border: 1px solid transparent;
+    color: inherit;
+    transition: border-color var(--dur-rapida) var(--ease-out), transform var(--dur-rapida) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) { .visor-control:hover { border-color: color-mix(in srgb, var(--color-papel) 30%, transparent); } }
+  .visor-control:active { transform: scale(0.94); }
+  @media (max-width: 47.99rem) { .visor-nav { display: none; } .visor-escenario { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .visor[open] { animation: visor-entra 450ms var(--ease-out); }
+    .visor-imagen :global(> *) { animation: visor-imagen 600ms var(--ease-out); }
+  }
+  @keyframes visor-entra { from { opacity: 0; } }
+  @keyframes visor-imagen { from { transform: scale(0.97); } }
+</style>
+
+<script>
+  // Filtros
+  const botones = [...document.querySelectorAll<HTMLButtonElement>('.filtro')];
+  const items = [...document.querySelectorAll<HTMLLIElement>('[data-grilla] .item')];
+  botones.forEach((b) =>
+    b.addEventListener('click', () => {
+      const f = b.dataset.filtro!;
+      botones.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      items.forEach((it) => {
+        const ver = f === 'todo' || it.dataset.categoria === f;
+        it.hidden = !ver;
+        it.classList.remove('entra');
+        if (ver) {
+          void it.offsetWidth;
+          it.classList.add('entra', 'visible');
+        }
+      });
+    }),
+  );
+
+  // Visor
+  const visor = document.querySelector<HTMLDialogElement>('[data-visor]')!;
+  const lienzo = visor.querySelector<HTMLElement>('[data-visor-imagen]')!;
+  const titulo = visor.querySelector<HTMLElement>('[data-visor-titulo]')!;
+  const contador = visor.querySelector<HTMLElement>('[data-visor-contador]')!;
+  const corona = document.querySelector('.item-corona')?.outerHTML ?? '';
+  let lista: HTMLButtonElement[] = [];
+  let actual = 0;
+
+  function mostrar(i: number) {
+    actual = (i + lista.length) % lista.length;
+    const b = lista[actual];
+    const grande = b.dataset.grande;
+    lienzo.innerHTML = '';
+    if (grande) {
+      const img = new Image();
+      img.src = grande;
+      img.alt = b.dataset.titulo ?? '';
+      lienzo.append(img);
+    } else {
+      const v = document.createElement('div');
+      v.className = 'vacio';
+      v.innerHTML = corona;
+      lienzo.append(v);
+    }
+    titulo.textContent = b.dataset.titulo ?? '';
+    contador.textContent = `${String(actual + 1).padStart(2, '0')} / ${String(lista.length).padStart(2, '0')}`;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.item-boton').forEach((b) =>
+    b.addEventListener('click', () => {
+      lista = [...document.querySelectorAll<HTMLButtonElement>('[data-grilla] .item:not([hidden]) .item-boton')];
+      mostrar(lista.indexOf(b));
+      visor.showModal();
+      document.documentElement.style.overflow = 'hidden';
+    }),
+  );
+  visor.addEventListener('close', () => {
+    document.documentElement.style.overflow = '';
+    lista[actual]?.focus();
+  });
+  visor.querySelector('[data-visor-cerrar]')!.addEventListener('click', () => visor.close());
+  visor.querySelector('[data-visor-anterior]')!.addEventListener('click', () => mostrar(actual - 1));
+  visor.querySelector('[data-visor-siguiente]')!.addEventListener('click', () => mostrar(actual + 1));
+  visor.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') mostrar(actual - 1);
+    if (e.key === 'ArrowRight') mostrar(actual + 1);
+  });
+  // Deslizar en pantallas táctiles
+  let x0: number | null = null;
+  visor.addEventListener('pointerdown', (e) => (x0 = e.clientX));
+  visor.addEventListener('pointerup', (e) => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0;
+    if (Math.abs(dx) > 50) mostrar(actual + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+  // Clic en el fondo cierra
+  visor.addEventListener('click', (e) => {
+    if (e.target === visor || (e.target as HTMLElement).classList.contains('visor-escenario')) visor.close();
+  });
+</script>

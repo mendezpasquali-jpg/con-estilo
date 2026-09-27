@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+import Logo from '../components/Logo.astro';
+import { enlaceWhatsApp } from '../data/sitio';
+---
+<Base titulo="Página no encontrada · Con Estilo" descripcion="La página que buscabas no existe." barraTurno={false}>
+  <section class="contenedor flex min-h-[100svh] flex-col justify-center py-32">
+    <Logo variante="isotipo" class="h-auto w-16 text-bruma" decorativo />
+    <p class="etiqueta mt-10">Error 404</p>
+    <h1 class="display mt-6 max-w-[14ch]">Esta página no existe.</h1>
+    <p class="lead mt-8 max-w-[32rem]">Puede que el enlace esté mal escrito o que la página se haya movido.</p>
+    <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
+      <a href="/" class="btn">Volver al inicio <Icono nombre="flecha" /></a>
+      <a href={enlaceWhatsApp()} class="enlace" target="_blank" rel="noopener">Pedir turno por WhatsApp</a>
+    </div>
+  </section>
+</Base>

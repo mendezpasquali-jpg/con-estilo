@@ -1,0 +1,115 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BarraTurno from '../components/BarraTurno.astro';
+import { schemaNegocio } from '../lib/schema';
+import { sitio } from '../data/sitio';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  schema?: boolean;
+  barraTurno?: boolean;
+}
+const { titulo, descripcion, schema = false, barraTurno = true } = Astro.props;
+
+const base = Astro.site!;
+const canonica = new URL(Astro.url.pathname, base).href;
+const og = new URL('/og.png', base).href;
+// Mientras el sitio viva en una URL de prueba no se deja indexar.
+const indexable = !base.hostname.endsWith('pages.dev');
+const dev = import.meta.env.DEV;
+---
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+    {!indexable && <meta name="robots" content="noindex, nofollow" />}
+
+    <link rel="preload" href="/fonts/bodoni-moda.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#F5F3EF" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content={sitio.nombre} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Con Estilo, peluquería unisex" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="geo.region" content="AR-X" />
+    <meta name="geo.placename" content={sitio.direccion.ciudad} />
+    <meta name="geo.position" content={`${sitio.geo.lat};${sitio.geo.lng}`} />
+    <meta name="ICBM" content={`${sitio.geo.lat}, ${sitio.geo.lng}`} />
+
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schemaNegocio(base))} />}
+
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a href="#contenido" class="sr-only-focusable fixed left-4 top-4 z-[60] bg-tinta px-4 py-3 text-papel">Saltar al contenido</a>
+    <Header />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer />
+    {barraTurno && <BarraTurno />}
+
+    {
+      dev && (
+        <button
+          type="button"
+          class="fixed bottom-20 left-4 z-[70] lg:bottom-4 bg-[#b4543a] px-3 py-2 text-xs font-medium text-white"
+          onclick="document.documentElement.classList.toggle('ver-pendientes')"
+        >
+          Ver pendientes
+        </button>
+      )
+    }
+
+    <script>
+      // Apariciones al hacer scroll: solo transform, nunca opacidad (ver global.css).
+      const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const objetivos = document.querySelectorAll('[data-aparece], .encabezado-seccion');
+      if (reducido || !('IntersectionObserver' in window)) {
+        objetivos.forEach((el) => el.classList.add('visible'));
+      } else {
+        const io = new IntersectionObserver(
+          (entradas) => {
+            for (const e of entradas) {
+              if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        objetivos.forEach((el) => io.observe(el));
+      }
+
+      // Contador de pendientes: solo existe en desarrollo (Vite lo quita del build).
+      if (import.meta.env.DEV) {
+        const boton = document.querySelector<HTMLButtonElement>('button[onclick*="ver-pendientes"]');
+        if (boton) boton.textContent = `Ver pendientes (${document.querySelectorAll('[data-pendiente], .marcador-nota').length})`;
+      }
+    </script>
+  </body>
+</html>

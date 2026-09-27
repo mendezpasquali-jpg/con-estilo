@@ -1,0 +1,76 @@
+---
+import Logo from './Logo.astro';
+import Icono from './Icono.astro';
+import { sitio, enlaceWhatsApp, horarioAgrupado } from '../data/sitio';
+
+const anio = new Date().getFullYear();
+const pre = Astro.url.pathname === '/' ? '' : '/';
+---
+<footer class="pie oscuro" aria-labelledby="pie-titulo">
+  <h2 id="pie-titulo" class="sr-only">Datos de contacto</h2>
+  <div class="contenedor pt-20 lg:pt-28">
+    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+      <div class="lg:col-span-4">
+        <p class="cita max-w-[22rem] text-papel">¿Querés un turno? Escribile a Carla.</p>
+        <a href={enlaceWhatsApp()} class="btn mt-8" target="_blank" rel="noopener">
+          <Icono nombre="whatsapp" /> WhatsApp
+        </a>
+      </div>
+
+      <div class="lg:col-span-3 lg:col-start-6">
+        <h3 class="etiqueta">Dirección</h3>
+        <address class="mt-4 not-italic leading-relaxed text-bruma">
+          {sitio.direccion.calle}<br />
+          {sitio.direccion.barrio}<br />
+          {sitio.direccion.ciudad}, {sitio.direccion.codigoPostal}
+        </address>
+        <a href={sitio.google.comoLlegar} class="enlace mt-2 text-papel" target="_blank" rel="noopener">
+          Cómo llegar <Icono nombre="flecha-diagonal" />
+        </a>
+      </div>
+
+      <div class="lg:col-span-2">
+        <h3 class="etiqueta">Horario</h3>
+        <ul class="mt-4 grid gap-3 text-bruma">
+          {horarioAgrupado().map((h) => (
+            <li>{h.dias}<br /><span class="text-papel">{h.horas}</span></li>
+          ))}
+          <li>Domingo y lunes<br /><span class="text-papel">Cerrado</span></li>
+        </ul>
+      </div>
+
+      <div class="lg:col-span-2">
+        <h3 class="etiqueta">Contacto</h3>
+        <ul class="mt-4 grid gap-1">
+          <li><a href={enlaceWhatsApp()} class="pie-enlace" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href={sitio.telefono.enlace} class="pie-enlace">{sitio.telefono.visible}</a></li>
+          <li><a href={sitio.google.ficha} class="pie-enlace" target="_blank" rel="noopener">Google</a></li>
+          <li><a href={`${pre}#servicios`} class="pie-enlace">Servicios</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pie-marca" aria-hidden="true">
+      <Logo variante="logotipo" class="h-auto w-full" decorativo />
+    </div>
+
+    <div class="flex flex-col gap-3 border-t border-[color-mix(in_srgb,var(--color-papel)_16%,transparent)] py-7 text-sm text-ceniza sm:flex-row sm:items-center sm:justify-between">
+      <p>© {anio} {sitio.nombre} · {sitio.bajada} · {sitio.direccion.ciudad}</p>
+      <a href="/privacidad" class="pie-enlace !min-h-0 text-ceniza">Privacidad</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .pie-enlace {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--color-papel);
+    text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) 0 calc(100% - 0.6rem) / 0 1px no-repeat;
+    transition: background-size var(--dur-media) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) { .pie-enlace:hover { background-size: 100% 1px; } }
+  .pie-marca { margin-top: clamp(4rem, 9vw, 7rem); padding-bottom: clamp(1.5rem, 3vw, 2.5rem); color: var(--color-papel); }
+</style>

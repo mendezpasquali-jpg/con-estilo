@@ -1,0 +1,59 @@
+---
+// Marca un bloque que depende de la clienta. En desarrollo lo recuadra y
+// muestra la nota; en el build de producción no deja ningún rastro en el HTML.
+interface Props {
+  nota: string;
+  class?: string;
+  en?: 'bloque' | 'linea';
+}
+const { nota, class: clase, en = 'bloque' } = Astro.props;
+const dev = import.meta.env.DEV;
+const Tag = en === 'linea' ? 'span' : 'div';
+---
+{
+  dev ? (
+    <Tag class:list={['pendiente', clase]} data-pendiente={nota}>
+      <slot />
+      <span class="pendiente-nota" aria-hidden="true">
+        Pendiente · {nota}
+      </span>
+    </Tag>
+  ) : (
+    <Tag class={clase}>
+      <slot />
+    </Tag>
+  )
+}
+
+
+{/* Estilos solo en desarrollo: en producción este componente no deja rastro. */}
+{dev && (
+  <style is:inline set:html={`
+.pendiente {
+    position: relative;
+    outline: 1px dashed #b4543a;
+    outline-offset: 6px;
+  }
+  span.pendiente { display: inline; }
+  .pendiente-nota {
+    position: absolute;
+    z-index: 30;
+    left: -6px;
+    top: -6px;
+    transform: translateY(-100%);
+    max-width: min(34rem, 90vw);
+    padding: 0.3rem 0.55rem;
+    background: #b4543a;
+    color: #fff;
+    font: 500 0.6875rem/1.35 var(--font-sans);
+    letter-spacing: 0.02em;
+    text-transform: none;
+    white-space: normal;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 120ms;
+  }
+  .pendiente:hover > .pendiente-nota,
+  html.ver-pendientes .pendiente > .pendiente-nota { opacity: 1; }
+`} />
+)}

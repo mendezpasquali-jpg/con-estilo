@@ -1,0 +1,62 @@
+---
+import EncabezadoSeccion from './EncabezadoSeccion.astro';
+import Icono from './Icono.astro';
+import Pendiente from './Pendiente.astro';
+import { resenas, pendienteResenas } from '../data/resenas';
+import { sitio } from '../data/sitio';
+
+const puntaje = String(sitio.google.puntaje).replace('.', ',');
+---
+<section id="resenas" class="seccion oscuro" aria-labelledby="resenas-titulo">
+  <div class="contenedor">
+    <EncabezadoSeccion numero="05" texto="Reseñas" />
+
+    <div class="mt-12 grid gap-16 lg:mt-16 lg:grid-cols-12 lg:gap-8">
+      <div class="lg:col-span-4">
+        <div class="lg:sticky lg:top-[calc(var(--alto-header)+2.5rem)]" data-aparece>
+          <h2 id="resenas-titulo" class="sr-only">Reseñas en Google</h2>
+          <p class="puntaje" aria-label={`${puntaje} de 5 en Google`}>{puntaje}</p>
+          <p class="mt-8 flex items-center gap-1 text-papel" aria-hidden="true">
+            {Array.from({ length: 5 }).map(() => <Icono nombre="estrella" class="h-4 w-4" />)}
+          </p>
+          <p class="mt-4 text-bruma">{sitio.google.opiniones} opiniones en Google</p>
+          <a href={sitio.google.ficha} class="btn btn-contorno mt-10" target="_blank" rel="noopener">
+            <Icono nombre="google" class="icono-wa h-4 w-4" /> Leer todas en Google
+          </a>
+        </div>
+      </div>
+
+      <Pendiente nota={pendienteResenas} class="lg:col-span-7 lg:col-start-6">
+        <ul class="citas">
+          {resenas.map((r, i) => (
+            <li data-aparece style={`--orden:${i}`}>
+              <blockquote>
+                <p class="cita">“{r.texto}”</p>
+                <footer class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+                  <cite class="not-italic font-medium text-papel">{r.autora}</cite>
+                  <span class="etiqueta">Reseña en Google</span>
+                </footer>
+              </blockquote>
+            </li>
+          ))}
+        </ul>
+      </Pendiente>
+    </div>
+  </div>
+</section>
+
+<style>
+  .puntaje {
+    font-family: var(--font-serif);
+    /* Eje óptico bajo: sobre fondo oscuro los trazos finos de la versión
+       display se pierden. */
+    font-variation-settings: 'opsz' 24;
+    font-weight: 450;
+    font-size: clamp(7rem, 14vw, 11rem);
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    font-feature-settings: 'lnum';
+  }
+  .citas > li { padding-block: 2.5rem; border-top: 1px solid color-mix(in srgb, var(--color-papel) 16%, transparent); }
+  .citas > li:first-child { padding-top: 0; border-top: 0; }
+</style>

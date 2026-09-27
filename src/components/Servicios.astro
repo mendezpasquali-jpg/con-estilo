@@ -1,0 +1,129 @@
+---
+import EncabezadoSeccion from './EncabezadoSeccion.astro';
+import Icono from './Icono.astro';
+import Pendiente from './Pendiente.astro';
+import { categorias, pendienteServicios } from '../data/servicios';
+import { consultaServicio, enlaceWhatsApp } from '../data/sitio';
+---
+<section id="servicios" class="seccion" aria-labelledby="servicios-titulo">
+  <div class="contenedor">
+    <EncabezadoSeccion numero="01" texto="Servicios" />
+
+    <div class="mt-12 grid gap-14 lg:mt-16 lg:grid-cols-12 lg:gap-8">
+      <div class="lg:col-span-4">
+        <div class="lg:sticky lg:top-[calc(var(--alto-header)+2.5rem)]">
+          <h2 id="servicios-titulo" class="titulo" data-aparece>Corte, color y tratamientos</h2>
+          <p class="lead mt-6 max-w-[26rem]" data-aparece style="--orden:1">
+            Los precios se consultan por WhatsApp: dependen del largo, la cantidad de pelo y el servicio. Tocá cualquier servicio y el mensaje sale escrito.
+          </p>
+          <a href={enlaceWhatsApp('Hola Carla, quería consultar precios.')} class="btn btn-contorno mt-9" target="_blank" rel="noopener" data-aparece style="--orden:2">
+            Consultar precios <Icono nombre="flecha" />
+          </a>
+        </div>
+      </div>
+
+      <Pendiente nota={pendienteServicios} class="lg:col-span-8 lg:col-start-5">
+        <div class="grid gap-16 md:gap-20">
+          {categorias.map((c, i) => (
+            <article class="categoria" aria-labelledby={`cat-${c.id}`}>
+              <header class="grid gap-3 md:grid-cols-[4rem_1fr] md:items-baseline md:gap-0" data-aparece>
+                <span class="etiqueta tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3 id={`cat-${c.id}`} class="subtitulo !text-[clamp(1.75rem,3vw,2.5rem)]">{c.nombre}</h3>
+                  <p class="mt-2 max-w-[36rem] text-piedra">{c.resumen}</p>
+                </div>
+              </header>
+
+              <ul class="servicios mt-8 md:ml-16">
+                {c.servicios.map((s) => (
+                  <li data-aparece>
+                    <a href={consultaServicio(s.nombre)} target="_blank" rel="noopener" class="servicio">
+                      <span class="servicio-nombre">{s.nombre}</span>
+                      <span class="servicio-detalle">{s.detalle}</span>
+                      <span class="servicio-accion" aria-hidden="true">
+                        <span class="servicio-consultar">Consultar</span>
+                        <Icono nombre="flecha-diagonal" class="h-4 w-4" />
+                      </span>
+                      <span class="sr-only">Consultar por WhatsApp (se abre en otra pestaña)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </Pendiente>
+    </div>
+  </div>
+</section>
+
+<style>
+  .servicios { border-top: 1px solid var(--color-bruma); }
+  .servicios li { border-bottom: 1px solid var(--color-bruma); }
+  .servicio {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.35rem 1.5rem;
+    padding-block: 1.35rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  @media (min-width: 48rem) {
+    .servicio { grid-template-columns: minmax(12rem, 16rem) 1fr auto; align-items: baseline; padding-block: 1.6rem; }
+  }
+  .servicio-nombre {
+    font-weight: 500;
+    font-size: 1.0625rem;
+    transition: transform var(--dur-media) var(--ease-out);
+  }
+  .servicio-detalle {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    color: var(--color-piedra);
+    font-size: 0.9688rem;
+    line-height: 1.55;
+  }
+  @media (min-width: 48rem) {
+    .servicio-detalle { grid-column: 2; grid-row: 1; }
+  }
+  .servicio-accion {
+    grid-column: 2;
+    grid-row: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: center;
+    color: var(--color-tinta);
+  }
+  @media (min-width: 48rem) { .servicio-accion { grid-column: 3; } }
+  .servicio-consultar {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    clip-path: inset(0 0 0 100%);
+    transform: translateX(0.5rem);
+    transition: clip-path var(--dur-media) var(--ease-out), transform var(--dur-media) var(--ease-out);
+  }
+  .servicio-accion :global(svg) { transition: transform var(--dur-media) var(--ease-out); }
+  .servicio::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--color-tinta);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 700ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .servicio:hover .servicio-nombre { transform: translateX(0.5rem); }
+    .servicio:hover .servicio-consultar { clip-path: inset(0); transform: none; }
+    .servicio:hover .servicio-accion :global(svg) { transform: rotate(45deg); }
+    .servicio:hover::before { transform: scaleX(1); }
+  }
+  .servicio:active .servicio-nombre { transform: translateX(0.25rem); }
+</style>

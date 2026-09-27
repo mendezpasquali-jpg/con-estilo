@@ -1,0 +1,23 @@
+---
+// Logo en línea (sin pedido extra) a partir de los SVG de marca/logo, que son
+// la fuente única. Toma el color del texto que lo rodea (currentColor).
+import vertical from '../../marca/logo/logo-vertical.svg?raw';
+import horizontal from '../../marca/logo/logo-horizontal.svg?raw';
+import logotipo from '../../marca/logo/logotipo.svg?raw';
+import isotipo from '../../marca/logo/isotipo.svg?raw';
+
+interface Props {
+  variante: 'vertical' | 'horizontal' | 'logotipo' | 'isotipo';
+  class?: string;
+  decorativo?: boolean;
+}
+const { variante, class: clase, decorativo = false } = Astro.props;
+const fuentes = { vertical, horizontal, logotipo, isotipo };
+
+const svg = fuentes[variante]
+  .replace(/<title>.*?<\/title>/, '')
+  .replace('fill="#151413"', 'fill="currentColor"')
+  .replace(' role="img"', decorativo ? ' aria-hidden="true" focusable="false"' : ' role="img" aria-label="Con Estilo, peluquería unisex"')
+  .replace('<svg ', `<svg class="${clase ?? ''}" `);
+---
+<Fragment set:html={svg} />

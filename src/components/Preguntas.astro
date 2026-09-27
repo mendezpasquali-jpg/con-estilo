@@ -1,0 +1,70 @@
+---
+import EncabezadoSeccion from './EncabezadoSeccion.astro';
+import Icono from './Icono.astro';
+import { preguntas } from '../data/contenido';
+---
+<section id="preguntas" class="seccion" aria-labelledby="preguntas-titulo">
+  <div class="contenedor">
+    <EncabezadoSeccion numero="06" texto="Preguntas frecuentes" />
+
+    <div class="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-8">
+      <h2 id="preguntas-titulo" class="titulo lg:col-span-4" data-aparece>Lo que más se consulta</h2>
+
+      <div class="preguntas lg:col-span-7 lg:col-start-6">
+        {preguntas.map((p, i) => (
+          <details name="preguntas" open={i === 0} data-aparece style={`--orden:${i}`}>
+            <summary>
+              <h3 class="subtitulo">{p.pregunta}</h3>
+              <span class="signo" aria-hidden="true"><Icono nombre="mas" class="h-5 w-5" /></span>
+            </summary>
+            <p class="respuesta">{p.respuesta}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .preguntas { border-top: 1px solid var(--color-tinta); }
+  details { border-bottom: 1px solid var(--color-bruma); }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 3rem;
+    padding-block: 1.6rem;
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary h3 { font-size: clamp(1.25rem, 1.8vw, 1.5rem); }
+  .signo {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    border: 1px solid var(--color-bruma);
+    transition: background-color var(--dur-media) var(--ease-out), color var(--dur-media) var(--ease-out), border-color var(--dur-media) var(--ease-out);
+  }
+  .signo :global(svg) { transition: transform var(--dur-media) var(--ease-out); }
+  details[open] .signo :global(svg) { transform: rotate(45deg); }
+  details[open] .signo { background: var(--color-tinta); border-color: var(--color-tinta); color: var(--color-papel); }
+  @media (hover: hover) and (pointer: fine) { summary:hover .signo { border-color: var(--color-tinta); } }
+  .respuesta { max-width: 38rem; padding-bottom: 1.75rem; color: var(--color-grafito); }
+
+  /* Apertura animada donde el navegador lo soporta; en el resto abre sin animación. */
+  @supports (interpolate-size: allow-keywords) {
+    @media (prefers-reduced-motion: no-preference) {
+      .preguntas { interpolate-size: allow-keywords; }
+      details::details-content {
+        block-size: 0;
+        overflow: clip;
+        transition: block-size var(--dur-media) var(--ease-out), content-visibility var(--dur-media) allow-discrete;
+      }
+      details[open]::details-content { block-size: auto; }
+    }
+  }
+</style>

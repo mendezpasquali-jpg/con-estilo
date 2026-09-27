@@ -1,0 +1,67 @@
+---
+// Barra fija de turno en pantallas chicas. Aparece al dejar atrás la portada
+// y se retira cuando está a la vista la sección Visitanos o el pie, que ya
+// tienen su propio botón.
+import Icono from './Icono.astro';
+import { enlaceWhatsApp } from '../data/sitio';
+---
+<div class="barra oscuro lg:hidden" data-barra aria-hidden="true">
+  <a href={enlaceWhatsApp()} class="barra-enlace" target="_blank" rel="noopener" tabindex="-1">
+    <span class="flex items-center gap-3"><Icono nombre="whatsapp" class="h-5 w-5" /> Pedir turno por WhatsApp</span>
+    <Icono nombre="flecha" class="h-5 w-5" />
+  </a>
+</div>
+
+<style>
+  .barra {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    padding-bottom: env(safe-area-inset-bottom);
+    transform: translateY(100%);
+    transition: transform var(--dur-media) var(--ease-out);
+  }
+  .barra[data-visible='si'] { transform: none; }
+  .barra-enlace {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3.5rem;
+    padding-inline: var(--margen);
+    color: var(--color-papel);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .barra-enlace:active { background: var(--color-grafito); }
+</style>
+
+<script>
+  const barra = document.querySelector<HTMLElement>('[data-barra]');
+  const enlace = barra?.querySelector('a');
+  const portada = document.querySelector('.hero');
+  const destinos = [document.getElementById('visitanos'), document.querySelector('.pie')].filter(Boolean) as Element[];
+  if (barra && enlace && portada) {
+    let pasoPortada = false;
+    const tapados = new Set<Element>();
+    const pintar = () => {
+      const ver = pasoPortada && tapados.size === 0;
+      barra.dataset.visible = ver ? 'si' : 'no';
+      barra.setAttribute('aria-hidden', String(!ver));
+      enlace.tabIndex = ver ? 0 : -1;
+    };
+    new IntersectionObserver(([e]) => {
+      pasoPortada = !e.isIntersecting && e.boundingClientRect.top < 0;
+      pintar();
+    }).observe(portada);
+    const io = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => (e.isIntersecting ? tapados.add(e.target) : tapados.delete(e.target)));
+      pintar();
+    });
+    destinos.forEach((d) => io.observe(d));
+  }
+</script>

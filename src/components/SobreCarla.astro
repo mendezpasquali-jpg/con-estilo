@@ -1,0 +1,68 @@
+---
+import EncabezadoSeccion from './EncabezadoSeccion.astro';
+import Foto from './Foto.astro';
+import Icono from './Icono.astro';
+import Pendiente from './Pendiente.astro';
+import { sobreCarla } from '../data/contenido';
+import { sitio, enlaceWhatsApp } from '../data/sitio';
+
+const dev = import.meta.env.DEV;
+const datos = [
+  ['Peluquería', 'Unisex, sobre todo mujeres'],
+  ['Turnos', 'Por WhatsApp, de martes a sábado'],
+  ['Dónde', `${sitio.direccion.barrio}, ${sitio.direccion.ciudad}`],
+];
+---
+<section id="carla" class="seccion oscuro" aria-labelledby="carla-titulo">
+  <div class="contenedor">
+    <EncabezadoSeccion numero="02" texto="Quién te atiende" />
+
+    <div class="mt-12 grid gap-14 lg:mt-16 lg:grid-cols-12 lg:gap-8">
+      <div class="lg:col-span-5" data-aparece>
+        <Foto proporcion="3 / 4" tono="oscuro" falta="Retrato de Carla en el local, vertical, fondo claro" sizes="(min-width: 64rem) 40vw, 100vw" />
+      </div>
+
+      <div class="flex flex-col lg:col-span-6 lg:col-start-7 lg:pt-6">
+        <h2 id="carla-titulo" class="titulo" data-aparece>{sobreCarla.titulo}</h2>
+
+        <p class="cita mt-8 text-papel" data-aparece style="--orden:1">{sobreCarla.destacado}</p>
+
+        <Pendiente nota={sobreCarla.pendiente} class="mt-10">
+          {dev ? (
+            <div class="grid gap-4 text-ceniza">
+              {sobreCarla.bio.map((p) => <p>{p}</p>)}
+            </div>
+          ) : null}
+        </Pendiente>
+
+        <dl class="datos mt-12" data-aparece style="--orden:2">
+          {datos.map(([k, v]) => (
+            <div>
+              <dt class="etiqueta">{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <div class="mt-10" data-aparece style="--orden:3">
+          <a href={enlaceWhatsApp()} class="btn" target="_blank" rel="noopener">
+            <Icono nombre="whatsapp" /> Escribirle a Carla
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .datos { border-top: 1px solid color-mix(in srgb, var(--color-papel) 16%, transparent); }
+  .datos > div {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+    padding-block: 1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-papel) 16%, transparent);
+  }
+  .datos dd { color: var(--color-bruma); }
+</style>
