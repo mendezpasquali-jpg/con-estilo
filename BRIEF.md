@@ -32,7 +32,8 @@ El detalle, con archivo y línea, sale de `npm run pendientes`. En `npm run dev`
 - [ ] Lista real de servicios, cómo los llama y marcas de productos que usa
 - [ ] Probar el enlace de WhatsApp (`wa.me/5493513874033`): si el número es fijo con WhatsApp Business, va sin el 9
 - [ ] Privacidad: nombre completo (o razón social) y CUIT de la responsable
-- [ ] Dominio y hosting (mientras tanto el sitio sale con `noindex`)
+- [x] Hosting: Cloudflare Pages, proyecto `con-estilo` en la cuenta personal, publica solo en cada push a `main` (2026-09-27). Vista previa en https://con-estilo.pages.dev
+- [ ] Dominio propio (mientras tanto el sitio sale con `noindex`)
 
 **A confirmar (hay borrador):**
 - [ ] Frase principal y bajada de la portada

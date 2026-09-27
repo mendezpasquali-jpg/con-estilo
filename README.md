@@ -58,7 +58,7 @@ Todo lo que depende de la clienta está marcado en el código:
 
 ## Publicar
 
-El sitio está pensado para Cloudflare Pages (salida estática; `public/_headers` trae las cabeceras de seguridad y caché). Otro hosting estático también sirve.
+Publicado en **Cloudflare Pages** (proyecto `con-estilo`, cuenta personal): cada push a `main` compila y publica solo en https://con-estilo.pages.dev. Configuración del proyecto: build `npm run build`, salida `dist`; la versión de Node sale de `.node-version`. Las vistas previas de cada publicación (`*.con-estilo.pages.dev`) están protegidas con Cloudflare Access. `public/_headers` trae las cabeceras de seguridad y caché.
 
 Mientras `site` en `astro.config.mjs` apunte a una URL `*.pages.dev`, el sitio sale con `noindex` y `robots.txt` bloquea el rastreo, para no competir con el dominio definitivo. Al tener dominio:
 
