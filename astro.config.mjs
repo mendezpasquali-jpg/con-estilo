@@ -6,7 +6,8 @@ import tailwindcss from '@tailwindcss/vite';
 // Dirección pública del sitio. Alimenta las URL canónicas, el sitemap, el
 // og:image y decide si el sitio se deja indexar: mientras sea una URL de
 // prueba (*.pages.dev) se emite noindex, para que no compita con el dominio
-// definitivo. PENDIENTE: reemplazar por el dominio real cuando exista.
+// definitivo. Lo mismo con *.workers.dev.
+// PENDIENTE: reemplazar por el dominio real cuando exista.
 const SITIO_URL = 'https://con-estilo.pages.dev';
 
 export default defineConfig({

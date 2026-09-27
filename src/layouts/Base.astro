@@ -15,10 +15,12 @@ interface Props {
 const { titulo, descripcion, schema = false, barraTurno = true } = Astro.props;
 
 const base = Astro.site!;
-const canonica = new URL(Astro.url.pathname, base).href;
+// Con build.format 'file' la ruta llega como "/index.html" o "/privacidad.html":
+// la canónica va sin extensión, igual que en el sitemap.
+const canonica = new URL(Astro.url.pathname.replace(/(index)?\.html$/, ''), base).href;
 const og = new URL('/og.png', base).href;
 // Mientras el sitio viva en una URL de prueba no se deja indexar.
-const indexable = !base.hostname.endsWith('pages.dev');
+const indexable = !/\.(pages|workers)\.dev$/.test(base.hostname);
 const dev = import.meta.env.DEV;
 ---
 <!doctype html>

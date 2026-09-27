@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
 
-// Mientras el sitio viva en una URL de prueba (*.pages.dev) no se deja rastrear.
+// Mientras el sitio viva en una URL de prueba (*.pages.dev o *.workers.dev) no se deja rastrear.
 export const GET: APIRoute = ({ site }) => {
-  const indexable = site && !site.hostname.endsWith('pages.dev');
+  const indexable = site && !/\.(pages|workers)\.dev$/.test(site.hostname);
   const cuerpo = indexable
     ? `User-agent: *\nAllow: /\n\nSitemap: ${new URL('/sitemap-index.xml', site).href}\n`
     : 'User-agent: *\nDisallow: /\n';
